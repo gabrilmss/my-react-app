@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { Post } from './pages/post';
 import { Home } from './pages/home';
 
 
@@ -10,8 +11,6 @@ import { Home } from './pages/home';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Home />
-
-
+    <Post />
   </React.StrictMode>,
 )

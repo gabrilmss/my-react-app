@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# não subir as chaves
+constants.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
