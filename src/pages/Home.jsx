@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Layout } from "../components/Layout";
 import { client } from "../lib/createClient";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 export const Home = () => {
   const [categories, setCategories] = useState([]); //retorna um array vazio
@@ -44,13 +45,14 @@ export const Home = () => {
                 <div className="card-body">
                   <h5 className="card-title">{post.fields.postTitle}</h5>
                   <p className="card-text">{post.fields.postDescription}</p>
+                  <Link to={`/post/${post.fields.postSlug}`} className="card-link">
+                    Ver post
+                  </Link>
                 </div>
               </div>
             ))}
 
-            <a href="#" className="btn btn-primary">
-              Ver todos os posts
-            </a>
+            <a href="#" className="btn btn-outline-primary">clique</a>
           </main>
 
           <aside className="col-md-4">

@@ -1,24 +1,31 @@
 import { useEffect, useState } from "react";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import { useParams, Link } from "react-router-dom/cjs/react-router-dom.min";
+
+
 import { Layout } from "../components/Layout";
 import { client } from "../lib/createClient";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
-const POST_SLUG = "new-angular-release";
+//const POST_SLUG = "new-angular-release";
 
-  export const Post = () => {
-    const [post, setPost] = useState(null);
+export const Post = () => {
 
-    useEffect(() => {
-        client
-            .getEntries({
-                "fields.postSlug": POST_SLUG,
-                content_type: 'blogPost',
-            })
-            .then(function (entries) {
-                console.log("post", entries);
-                setPost(entries.items[0] || null);
-            });
-    }, []);
+  const { slug } = useParams();
+
+  const [post, setPost] = useState(null);
+
+  useEffect(() => {
+    client
+      .getEntries({
+        "fields.postSlug": slug,
+        content_type: "blogPost",
+      })
+      .then(function (entries) {
+        console.log("post", entries);
+        setPost(entries.items[0] || null);
+      });
+      
+  }, []);
 
   return (
     <Layout>
@@ -36,9 +43,9 @@ const POST_SLUG = "new-angular-release";
             ></div>
 
             <div className="mt-1">
-              <a href="#" className="btn btn-primary">
+              <Link to="/" className="btn btn-outline-primary">
                 Voltar para Home
-              </a>
+              </Link>
             </div>
           </div>
         </div>
