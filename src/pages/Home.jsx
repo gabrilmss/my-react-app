@@ -14,6 +14,8 @@ export const Home = () => {
     client
       .getEntries({
         content_type: "blogPost",
+        limit: 2,
+        order: "-sys.createdAt",
       })
       .then(function (entries) {
         console.log("posts", entries.items);
@@ -24,7 +26,7 @@ export const Home = () => {
     client
       .getEntries({
         content_type: "blogCategory",
-        limit: 5,
+        limit: 10,
         order: "-sys.createdAt",
       })
       .then(function (entries) {
@@ -38,21 +40,26 @@ export const Home = () => {
       <div className="container">
         <div className="row">
           <main className="col-md-8">
-            <h1 className="my-3">Últimos posts</h1>
+            <h1 className="my-3">Publicações recentes</h1>
 
             {posts.map((post) => (
               <div className="card mb-3" key={post.sys.id}>
                 <div className="card-body">
                   <h5 className="card-title">{post.fields.postTitle}</h5>
                   <p className="card-text">{post.fields.postDescription}</p>
-                  <Link to={`/post/${post.fields.postSlug}`} className="card-link">
-                    Ver post
+                  <Link
+                    to={`/post/${post.fields.postSlug}`}
+                    className="card-link"
+                  >
+                    ver post
                   </Link>
                 </div>
               </div>
             ))}
 
-            <a href="#" className="btn btn-outline-primary">clique</a>
+            <Link to={"/allposts"} className="btn btn-outline-primary">
+              ver todos os posts
+            </Link>
           </main>
 
           <aside className="col-md-4">
