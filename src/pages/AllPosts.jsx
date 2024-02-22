@@ -55,21 +55,24 @@ export const AllPosts = () => {
 
   function atualizaPageNumber(avanca) {
     if (avanca) {
+      if (currentPage == totalPages - 1) {
+        setProximoEnabled(false);
+      }
+      buscarEntradas((currentPage + 1) * page_size);
       setCurrentPage((currentPage) => currentPage + 1);
     } else {
+      if (currentPage == 1) {
+        setAnteriorEnabled(false);
+        setProximoEnabled(true);
+      }
+      buscarEntradas((currentPage - 1) * page_size);
       setCurrentPage((currentPage) => currentPage - 1);
     }
 
-    buscarEntradas(currentPage * page_size);
-
-    if (currentPage == 1) {
+    if (currentPage == 1 && currentPage < totalPages) {
       setProximoEnabled(true);
     } else if (currentPage > 1) {
       setAnteriorEnabled(true);
-    } else if (currentPage == totalPages) {
-      setProximoEnabled(false);
-    } else {
-      setAnteriorEnabled(false);
     }
   }
 
