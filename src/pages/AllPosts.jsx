@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
-import { useParams, Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
+
+//import Pagination from "@mui/material/Pagination";
+//import Stack from "@mui/material/Stack";
 
 import { Layout } from "../components/Layout";
 import { client } from "../lib/createClient";
-import { Header } from "../components/Header";
 
 export const AllPosts = () => {
   const [posts, setPosts] = useState([]);
+  const [totalPages, setTotalPages] = useState();
+  const [totalItems, setTotalItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isButtonDisabled, setButtonDisabled] = useState(false);
+  const page_size = 2;
 
   useEffect(() => {
     client
@@ -16,9 +22,49 @@ export const AllPosts = () => {
         order: "-sys.createdAt",
       })
       .then(function (entries) {
+        setTotalItems(entries.items.length);
+      });
+
+    client
+
+      .getEntries({
+        content_type: "blogPost",
+        limit: page_size,
+        skip: currentPage,
+        order: "-sys.createdAt",
+      })
+      .then(function (entries) {
         setPosts(entries.items);
       });
-  });
+  }, []);
+
+  function atualizaPageNumber() {
+    setTotalPages(totalItems / page_size);
+    if (currentPage >= totalPages) {
+      console.log("opa");
+      setButtonDisabled(true);
+    } else {
+      setCurrentPage(currentPage + 1);
+      }
+    }
+    console.log("currentPage", currentPage);
+
+    console.log("variável totalItems: ", totalItems);
+    console.log("variável totalCurrentPage: ", currentPage);
+    console.log("variável totalPages: ", totalPages);
+
+    client
+
+      .getEntries({
+        content_type: "blogPost",
+        limit: page_size,
+        skip: currentPage,
+        order: "-sys.createdAt",
+      })
+      .then(function (entries) {
+        setPosts(entries.items);
+      });
+  }
 
   return (
     <Layout>
@@ -41,12 +87,19 @@ export const AllPosts = () => {
               </div>
             </div>
           ))}
-
           <div className="mt-1">
             <Link to="/" className="btn btn-outline-primary">
               voltar para home
             </Link>
           </div>
+
+          <button
+            className="btn btn-outline-primary"
+            onClick={atualizaPageNumber}
+            disabled={isButtonDisabled}
+          >
+            ver mais
+          </button>
         </main>
       </div>
     </Layout>

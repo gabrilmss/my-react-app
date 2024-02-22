@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { useParams, Link } from "react-router-dom/cjs/react-router-dom.min";
 
-
 import { Layout } from "../components/Layout";
 import { client } from "../lib/createClient";
 
 //const POST_SLUG = "new-angular-release";
 
 export const Post = () => {
-
   const { slug } = useParams();
 
   const [post, setPost] = useState(null);
@@ -21,10 +19,8 @@ export const Post = () => {
         content_type: "blogPost",
       })
       .then(function (entries) {
-        console.log("post", entries);
         setPost(entries.items[0] || null);
       });
-      
   }, []);
 
   return (

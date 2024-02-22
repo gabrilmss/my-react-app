@@ -14,11 +14,11 @@ export const Home = () => {
     client
       .getEntries({
         content_type: "blogPost",
-        limit: 2,
+        limit: 5,
         order: "-sys.createdAt",
       })
       .then(function (entries) {
-        console.log("posts", entries.items);
+        console.log("total: ", entries.items.length);
         setPosts(entries.items);
       });
 
@@ -26,7 +26,7 @@ export const Home = () => {
     client
       .getEntries({
         content_type: "blogCategory",
-        limit: 10,
+        limit: 5,
         order: "-sys.createdAt",
       })
       .then(function (entries) {
