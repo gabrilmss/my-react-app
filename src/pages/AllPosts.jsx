@@ -45,7 +45,6 @@ export const AllPosts = () => {
       setButtonDisabled(true);
     } else {
       setCurrentPage(currentPage + 1);
-      }
     }
     console.log("currentPage", currentPage);
 
