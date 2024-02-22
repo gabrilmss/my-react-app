@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
 
 //import Pagination from "@mui/material/Pagination";
 //import Stack from "@mui/material/Stack";
@@ -10,10 +11,15 @@ import { client } from "../lib/createClient";
 export const AllPosts = () => {
   const [posts, setPosts] = useState([]);
   const [totalPages, setTotalPages] = useState();
-  const [totalItems, setTotalItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isButtonDisabled, setButtonDisabled] = useState(false);
+  const [totalItems, setTotalItems] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [proximoAtivo, setProximoEnabled] = useState(true);
+  const [anteriorAtivo, setAnteriorEnabled] = useState(false);
   const page_size = 2;
+  const history = useHistory();
+  const handleButtonClick = () => {
+    history.push("/");
+  };
 
   useEffect(() => {
     client
@@ -23,47 +29,54 @@ export const AllPosts = () => {
       })
       .then(function (entries) {
         setTotalItems(entries.items.length);
+        setTotalPages(Math.ceil(entries.items.length / page_size));
       });
 
-    client
-
-      .getEntries({
-        content_type: "blogPost",
-        limit: page_size,
-        skip: currentPage,
-        order: "-sys.createdAt",
-      })
-      .then(function (entries) {
-        setPosts(entries.items);
-      });
+    //buscarEntradas(0); //avaliar
   }, []);
 
-  function atualizaPageNumber() {
-    setTotalPages(totalItems / page_size);
-    if (currentPage >= totalPages) {
-      console.log("opa");
-      setButtonDisabled(true);
-    } else {
-      setCurrentPage(currentPage + 1);
-    }
-    console.log("currentPage", currentPage);
-
-    console.log("variável totalItems: ", totalItems);
-    console.log("variável totalCurrentPage: ", currentPage);
-    console.log("variável totalPages: ", totalPages);
-
+  function buscarEntradas(skip) {
     client
 
       .getEntries({
         content_type: "blogPost",
         limit: page_size,
-        skip: currentPage,
+        skip: skip,
         order: "-sys.createdAt",
       })
       .then(function (entries) {
         setPosts(entries.items);
       });
   }
+
+  useEffect(() => {
+    buscarEntradas((currentPage - 1) * page_size);
+  }, [currentPage, totalPages]);
+
+  function atualizaPageNumber(avanca) {
+    if (avanca) {
+      setCurrentPage((currentPage) => currentPage + 1);
+    } else {
+      setCurrentPage((currentPage) => currentPage - 1);
+    }
+
+    buscarEntradas(currentPage * page_size);
+
+    if (currentPage == 1) {
+      setProximoEnabled(true);
+    } else if (currentPage > 1) {
+      setAnteriorEnabled(true);
+    } else if (currentPage == totalPages) {
+      setProximoEnabled(false);
+    } else {
+      setAnteriorEnabled(false);
+    }
+  }
+
+  console.log("currentPage", currentPage);
+  console.log("variável totalItems: ", totalItems);
+  console.log("variável totalCurrentPage: ", currentPage);
+  console.log("variável totalPages: ", totalPages);
 
   return (
     <Layout>
@@ -86,19 +99,34 @@ export const AllPosts = () => {
               </div>
             </div>
           ))}
-          <div className="mt-1">
-            <Link to="/" className="btn btn-outline-primary">
-              voltar para home
-            </Link>
-          </div>
 
-          <button
-            className="btn btn-outline-primary"
-            onClick={atualizaPageNumber}
-            disabled={isButtonDisabled}
+          <div
+            className="button-container"
+            style={{ display: "flex", justifyContent: "space-between" }}
           >
-            ver mais
-          </button>
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => atualizaPageNumber(true)}
+              disabled={!proximoAtivo}
+            >
+              próxima
+            </button>
+
+            <button
+              className="btn btn-outline-primary"
+              onClick={handleButtonClick}
+            >
+              voltar para home
+            </button>
+
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => atualizaPageNumber(false)}
+              disabled={!anteriorAtivo}
+            >
+              anterior
+            </button>
+          </div>
         </main>
       </div>
     </Layout>
